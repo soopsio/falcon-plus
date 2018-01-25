@@ -28,17 +28,21 @@ type HttpConfig struct {
 }
 
 type RedisConfig struct {
-	Addr          string   `json:"addr"`
-	MaxIdle       int      `json:"maxIdle"`
-	HighQueues    []string `json:"highQueues"`
-	LowQueues     []string `json:"lowQueues"`
-	UserIMQueue   string   `json:"userIMQueue"`
-	UserSmsQueue  string   `json:"userSmsQueue"`
-	UserMailQueue string   `json:"userMailQueue"`
+	Addr            string   `json:"addr"`
+	MaxIdle         int      `json:"maxIdle"`
+	HighQueues      []string `json:"highQueues"`
+	LowQueues       []string `json:"lowQueues"`
+	UserIMQueue     string   `json:"userIMQueue"`
+	UserSmsQueue    string   `json:"userSmsQueue"`
+	UserMailQueue   string   `json:"userMailQueue"`
+	UserLPDingQueue string   `json:"userLPDingQueue"`
 }
 
 type ApiConfig struct {
 	Sms          string `json:"sms"`
+	LPDing       string `json:"lpding"`
+	LPClientId   string `json:"lpclient_id"`
+	LPAlarmCode  string `json:"lpalarm_code"`
 	Mail         string `json:"mail"`
 	Dashboard    string `json:"dashboard"`
 	PlusApi      string `json:"plus_api"`
@@ -53,9 +57,10 @@ type FalconPortalConfig struct {
 }
 
 type WorkerConfig struct {
-	IM   int `json:"im"`
-	Sms  int `json:"sms"`
-	Mail int `json:"mail"`
+	IM     int `json:"im"`
+	Sms    int `json:"sms"`
+	Mail   int `json:"mail"`
+	LPDing int `json:"lpding"`
 }
 
 type HousekeeperConfig struct {

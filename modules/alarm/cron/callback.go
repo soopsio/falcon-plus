@@ -16,9 +16,10 @@ package cron
 
 import (
 	"fmt"
-	log "github.com/Sirupsen/logrus"
 	"strings"
 	"time"
+
+	log "github.com/Sirupsen/logrus"
 
 	"github.com/open-falcon/falcon-plus/common/model"
 	"github.com/open-falcon/falcon-plus/modules/alarm/api"
@@ -38,9 +39,11 @@ func HandleCallback(event *model.Event, action *api.Action) {
 		smsContent := GenerateSmsContent(event)
 		mailContent := GenerateMailContent(event)
 		imContent := GenerateIMContent(event)
+		lpdingContent := GenerateLPDingContent(event)
 		if action.BeforeCallbackSms == 1 {
 			redi.WriteSms(phones, smsContent)
 			redi.WriteIM(ims, imContent)
+			redi.WriteLPDing(phones, smsContent, lpdingContent)
 		}
 
 		if action.BeforeCallbackMail == 1 {

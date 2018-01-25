@@ -83,12 +83,27 @@ func popEvent(queues []string) (*cmodel.Event, error) {
 		log.Errorf("parse alarm event fail: %v", err)
 		return nil, err
 	}
-
 	log.Debugf("pop event: %s", event.String())
 
 	//insert event into database
 	eventmodel.InsertEvent(&event)
 	// events no longer saved in memory
+
+	// 添加可读概要信息
+	status := "恢复"
+	if event.Status != "OK" {
+		status = "故障"
+	}
+	switch event.Priority() {
+	case 0:
+		event.Summary = status + ":紧急"
+	case 1:
+		event.Summary = status + ":重要"
+	case 2:
+		event.Summary = status + ":警告"
+	default:
+		event.Summary = status + ":提醒"
+	}
 
 	return &event, nil
 }

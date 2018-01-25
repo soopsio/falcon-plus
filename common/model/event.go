@@ -23,6 +23,7 @@ import (
 // 机器监控和实例监控都会产生Event，共用这么一个struct
 type Event struct {
 	Id          string            `json:"id"`
+	Summary     string            `json:"summary,omitempty"`
 	Strategy    *Strategy         `json:"strategy"`
 	Expression  *Expression       `json:"expression"`
 	Status      string            `json:"status"` // OK or PROBLEM

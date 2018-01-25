@@ -20,14 +20,18 @@
         ],
         "userIMQueue": "/queue/user/im",
         "userSmsQueue": "/queue/user/sms",
-        "userMailQueue": "/queue/user/mail"
+        "userMailQueue": "/queue/user/mail",
+        "userLPDingQueue": "/queue/user/lpding"
     },
     "api": {
         "im": "http://127.0.0.1:10086/wechat",
         "sms": "http://127.0.0.1:10086/sms",
         "mail": "http://127.0.0.1:10086/mail",
+        "lpding": "http://10.10.102.100:7255/RPC/IDingTalkService/sendTextMessage",
+        "lpclient_id": "30045",
+        "lpalarm_code": "BP-03",
         "dashboard": "http://127.0.0.1:8081",
-        "plus_api":"http://127.0.0.1:8080",
+        "plus_api": "http://127.0.0.1:8080",
         "plus_api_token": "default-token-used-in-server-side"
     },
     "falcon_portal": {
@@ -38,7 +42,8 @@
     "worker": {
         "im": 10,
         "sms": 10,
-        "mail": 50
+        "mail": 50,
+        "lpding": 30
     },
     "housekeeper": {
         "event_retention_days": 7,

@@ -23,6 +23,15 @@ type MailDto struct {
 	Status   string `json:"status"`
 }
 
+type LPDingDto struct {
+	Priority int    `json:"priority"`
+	Metric   string `json:"metric"`
+	Subject  string `json:"subject"`
+	Content  string `json:"content"`
+	Phone    string `json:"phone"`
+	Status   string `json:"status"`
+}
+
 type SmsDto struct {
 	Priority int    `json:"priority"`
 	Metric   string `json:"metric"`

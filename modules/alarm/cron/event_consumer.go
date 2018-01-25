@@ -16,6 +16,7 @@ package cron
 
 import (
 	"encoding/json"
+
 	log "github.com/Sirupsen/logrus"
 
 	cmodel "github.com/open-falcon/falcon-plus/common/model"
@@ -57,12 +58,13 @@ func consumeHighEvents(event *cmodel.Event, action *api.Action) {
 	smsContent := GenerateSmsContent(event)
 	mailContent := GenerateMailContent(event)
 	imContent := GenerateIMContent(event)
-
+	lpdingContent := GenerateLPDingContent(event)
 	// <=P2 才发送短信
 	if event.Priority() < 3 {
 		redi.WriteSms(phones, smsContent)
 	}
 
+	redi.WriteLPDing(phones, smsContent, lpdingContent)
 	redi.WriteIM(ims, imContent)
 	redi.WriteMail(mails, smsContent, mailContent)
 
@@ -78,7 +80,7 @@ func consumeLowEvents(event *cmodel.Event, action *api.Action) {
 	if event.Priority() < 3 {
 		ParseUserSms(event, action)
 	}
-
+	ParseUserLPDing(event, action)
 	ParseUserIm(event, action)
 	ParseUserMail(event, action)
 }
@@ -143,6 +145,41 @@ func ParseUserMail(event *cmodel.Event, action *api.Action) {
 		bs, err := json.Marshal(dto)
 		if err != nil {
 			log.Error("json marshal MailDto fail:", err)
+			continue
+		}
+
+		_, err = rc.Do("LPUSH", queue, string(bs))
+		if err != nil {
+			log.Error("LPUSH redis", queue, "fail:", err, "dto:", string(bs))
+		}
+	}
+}
+func ParseUserLPDing(event *cmodel.Event, action *api.Action) {
+	userMap := api.GetUsers(action.Uic)
+
+	metric := event.Metric()
+	subject := GenerateSmsContent(event)
+	content := GenerateLPDingContent(event)
+	status := event.Status
+	priority := event.Priority()
+
+	queue := g.Config().Redis.UserLPDingQueue
+
+	rc := g.RedisConnPool.Get()
+	defer rc.Close()
+
+	for _, user := range userMap {
+		dto := LPDingDto{
+			Priority: priority,
+			Metric:   metric,
+			Subject:  subject,
+			Content:  content,
+			Phone:    user.Phone,
+			Status:   status,
+		}
+		bs, err := json.Marshal(dto)
+		if err != nil {
+			log.Error("json marshal LPDingDto fail:", err)
 			continue
 		}
 

@@ -16,8 +16,9 @@ package redi
 
 import (
 	"encoding/json"
-	log "github.com/Sirupsen/logrus"
 	"strings"
+
+	log "github.com/Sirupsen/logrus"
 
 	"github.com/open-falcon/falcon-plus/modules/alarm/g"
 	"github.com/open-falcon/falcon-plus/modules/alarm/model"
@@ -77,6 +78,21 @@ func WriteMailModel(mail *model.Mail) {
 	lpush(MAIL_QUEUE_NAME, string(bs))
 }
 
+func WriteLPDingModel(lpding *model.LPDing) {
+	if lpding == nil {
+		return
+	}
+
+	bs, err := json.Marshal(lpding)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
+	log.Debugf("write lpding to queue, lpding:%v, queue:%s", lpding, LPDING_QUEUE_NAME)
+	lpush(LPDING_QUEUE_NAME, string(bs))
+}
+
 func WriteSms(tos []string, content string) {
 	if len(tos) == 0 {
 		return
@@ -102,4 +118,13 @@ func WriteMail(tos []string, subject, content string) {
 
 	mail := &model.Mail{Tos: strings.Join(tos, ","), Subject: subject, Content: content}
 	WriteMailModel(mail)
+}
+
+func WriteLPDing(tos []string, subject, content string) {
+	if len(tos) == 0 {
+		return
+	}
+
+	lpding := &model.LPDing{Tos: strings.Join(tos, ","), Subject: subject, Content: content}
+	WriteLPDingModel(lpding)
 }

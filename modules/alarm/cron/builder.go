@@ -24,7 +24,8 @@ import (
 
 func BuildCommonSMSContent(event *model.Event) string {
 	return fmt.Sprintf(
-		"[P%d][%s][%s][][%s %s %s %s %s%s%s][O%d %s]",
+		"[%s][P%d][%s][%s][][%s %s %s %s %s%s%s][O%d %s]",
+		event.Summary,
 		event.Priority(),
 		event.Status,
 		event.Endpoint,
@@ -42,7 +43,8 @@ func BuildCommonSMSContent(event *model.Event) string {
 
 func BuildCommonIMContent(event *model.Event) string {
 	return fmt.Sprintf(
-		"[P%d][%s][%s][][%s %s %s %s %s%s%s][O%d %s]",
+		"[%s][P%d][%s][%s][][%s %s %s %s %s%s%s][O%d %s]",
+		event.Summary,
 		event.Priority(),
 		event.Status,
 		event.Endpoint,
@@ -61,7 +63,30 @@ func BuildCommonIMContent(event *model.Event) string {
 func BuildCommonMailContent(event *model.Event) string {
 	link := g.Link(event)
 	return fmt.Sprintf(
-		"%s\r\nP%d\r\nEndpoint:%s\r\nMetric:%s\r\nTags:%s\r\n%s: %s%s%s\r\nNote:%s\r\nMax:%d, Current:%d\r\nTimestamp:%s\r\n%s\r\n",
+		"[%s]\r\n%s\r\nP%d\r\nEndpoint:%s\r\nMetric:%s\r\nTags:%s\r\n%s: %s%s%s\r\nNote:%s\r\nMax:%d, Current:%d\r\nTimestamp:%s\r\n%s\r\n",
+		event.Summary,
+		event.Status,
+		event.Priority(),
+		event.Endpoint,
+		event.Metric(),
+		utils.SortedTags(event.PushedTags),
+		event.Func(),
+		utils.ReadableFloat(event.LeftValue),
+		event.Operator(),
+		utils.ReadableFloat(event.RightValue()),
+		event.Note(),
+		event.MaxStep(),
+		event.CurrentStep,
+		event.FormattedTime(),
+		link,
+	)
+}
+
+func BuildCommonLPDingContent(event *model.Event) string {
+	link := g.Link(event)
+	return fmt.Sprintf(
+		"[%s]\n%s\nP%d\nEndpoint: %s\nMetric: %s\nTags: %s\n%s: %s%s%s\nNote: %s\nMax: %d, Current: %d\nTimestamp: %s\n%s\n",
+		event.Summary,
 		event.Status,
 		event.Priority(),
 		event.Endpoint,
@@ -89,4 +114,8 @@ func GenerateMailContent(event *model.Event) string {
 
 func GenerateIMContent(event *model.Event) string {
 	return BuildCommonIMContent(event)
+}
+
+func GenerateLPDingContent(event *model.Event) string {
+	return BuildCommonLPDingContent(event)
 }

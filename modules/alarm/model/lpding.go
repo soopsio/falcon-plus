@@ -12,23 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package cron
+package model
 
 import (
-	"github.com/open-falcon/falcon-plus/modules/alarm/g"
+	"fmt"
 )
 
-var (
-	IMWorkerChan     chan int
-	SmsWorkerChan    chan int
-	MailWorkerChan   chan int
-	LPDingWorkerChan chan int
-)
+type LPDing struct {
+	Tos     string `json:"tos"`
+	Subject string `json:"subject"`
+	Content string `json:"content"`
+}
 
-func InitSenderWorker() {
-	workerConfig := g.Config().Worker
-	IMWorkerChan = make(chan int, workerConfig.IM)
-	SmsWorkerChan = make(chan int, workerConfig.Sms)
-	MailWorkerChan = make(chan int, workerConfig.Mail)
-	LPDingWorkerChan = make(chan int, workerConfig.LPDing)
+func (this *LPDing) String() string {
+	return fmt.Sprintf(
+		"<Tos:%s, Subject:%s, Content:%s>",
+		this.Tos,
+		this.Subject,
+		this.Content,
+	)
 }
