@@ -43,11 +43,11 @@ func CombineMail() {
 	}
 }
 
-func CombineLPDing() {
+func CombineDing() {
 	for {
 		// 每分钟读取处理一次
 		time.Sleep(time.Minute)
-		combineLPDing()
+		combineDing()
 	}
 }
 
@@ -96,20 +96,20 @@ func combineMail() {
 	}
 }
 
-func combineLPDing() {
-	dtos := popAllLPDingDto()
+func combineDing() {
+	dtos := popAllDingDto()
 	count := len(dtos)
 	if count == 0 {
 		return
 	}
 
-	dtoMap := make(map[string][]*LPDingDto)
+	dtoMap := make(map[string][]*DingDto)
 	for i := 0; i < count; i++ {
 		key := fmt.Sprintf("%d%s%s%s", dtos[i].Priority, dtos[i].Status, dtos[i].Phone, dtos[i].Metric)
 		if _, ok := dtoMap[key]; ok {
 			dtoMap[key] = append(dtoMap[key], dtos[i])
 		} else {
-			dtoMap[key] = []*LPDingDto{dtos[i]}
+			dtoMap[key] = []*DingDto{dtos[i]}
 		}
 	}
 
@@ -117,7 +117,7 @@ func combineLPDing() {
 	for _, arr := range dtoMap {
 		size := len(arr)
 		if size == 1 {
-			redi.WriteLPDing([]string{arr[0].Phone}, arr[0].Subject, arr[0].Content)
+			redi.WriteDing([]string{arr[0].Phone}, arr[0].Subject, arr[0].Content)
 			continue
 		}
 
@@ -128,8 +128,8 @@ func combineLPDing() {
 		}
 		content := strings.Join(contentArr, "\r\n")
 
-		log.Debugf("combined lpding subject:%s, content:%s", subject, content)
-		redi.WriteLPDing([]string{arr[0].Phone}, subject, content)
+		log.Debugf("combined ding subject:%s, content:%s", subject, content)
+		redi.WriteDing([]string{arr[0].Phone}, subject, content)
 	}
 }
 
@@ -305,9 +305,9 @@ func popAllMailDto() []*MailDto {
 	return ret
 }
 
-func popAllLPDingDto() []*LPDingDto {
-	ret := []*LPDingDto{}
-	queue := g.Config().Redis.UserLPDingQueue
+func popAllDingDto() []*DingDto {
+	ret := []*DingDto{}
+	queue := g.Config().Redis.UserDingQueue
 
 	rc := g.RedisConnPool.Get()
 	defer rc.Close()
@@ -316,7 +316,7 @@ func popAllLPDingDto() []*LPDingDto {
 		reply, err := redis.String(rc.Do("RPOP", queue))
 		if err != nil {
 			if err != redis.ErrNil {
-				log.Error("get LPDingDto fail", err)
+				log.Error("get DingDto fail", err)
 			}
 			break
 		}
@@ -325,14 +325,14 @@ func popAllLPDingDto() []*LPDingDto {
 			continue
 		}
 
-		var lpdingDto LPDingDto
-		err = json.Unmarshal([]byte(reply), &lpdingDto)
+		var dingDto DingDto
+		err = json.Unmarshal([]byte(reply), &dingDto)
 		if err != nil {
-			log.Errorf("json unmarshal LPDingDto: %s fail: %v", reply, err)
+			log.Errorf("json unmarshal DingDto: %s fail: %v", reply, err)
 			continue
 		}
 
-		ret = append(ret, &lpdingDto)
+		ret = append(ret, &dingDto)
 	}
 
 	return ret

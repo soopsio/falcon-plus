@@ -23,7 +23,7 @@ type MailDto struct {
 	Status   string `json:"status"`
 }
 
-type LPDingDto struct {
+type DingDto struct {
 	Priority int    `json:"priority"`
 	Metric   string `json:"metric"`
 	Subject  string `json:"subject"`

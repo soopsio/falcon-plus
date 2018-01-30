@@ -39,11 +39,11 @@ func HandleCallback(event *model.Event, action *api.Action) {
 		smsContent := GenerateSmsContent(event)
 		mailContent := GenerateMailContent(event)
 		imContent := GenerateIMContent(event)
-		lpdingContent := GenerateLPDingContent(event)
+		dingContent := GenerateDingContent(event)
 		if action.BeforeCallbackSms == 1 {
 			redi.WriteSms(phones, smsContent)
 			redi.WriteIM(ims, imContent)
-			redi.WriteLPDing(phones, smsContent, lpdingContent)
+			redi.WriteDing(phones, smsContent, dingContent)
 		}
 
 		if action.BeforeCallbackMail == 1 {

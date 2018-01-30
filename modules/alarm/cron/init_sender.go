@@ -19,10 +19,10 @@ import (
 )
 
 var (
-	IMWorkerChan     chan int
-	SmsWorkerChan    chan int
-	MailWorkerChan   chan int
-	LPDingWorkerChan chan int
+	IMWorkerChan   chan int
+	SmsWorkerChan  chan int
+	MailWorkerChan chan int
+	DingWorkerChan chan int
 )
 
 func InitSenderWorker() {
@@ -30,5 +30,5 @@ func InitSenderWorker() {
 	IMWorkerChan = make(chan int, workerConfig.IM)
 	SmsWorkerChan = make(chan int, workerConfig.Sms)
 	MailWorkerChan = make(chan int, workerConfig.Mail)
-	LPDingWorkerChan = make(chan int, workerConfig.LPDing)
+	DingWorkerChan = make(chan int, workerConfig.Ding)
 }

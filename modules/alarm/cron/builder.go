@@ -82,7 +82,7 @@ func BuildCommonMailContent(event *model.Event) string {
 	)
 }
 
-func BuildCommonLPDingContent(event *model.Event) string {
+func BuildCommonDingContent(event *model.Event) string {
 	link := g.Link(event)
 	return fmt.Sprintf(
 		"[%s]\n%s\nP%d\nEndpoint: %s\nMetric: %s\nTags: %s\n%s: %s%s%s\nNote: %s\nMax: %d, Current: %d\nTimestamp: %s\n%s\n",
@@ -116,6 +116,6 @@ func GenerateIMContent(event *model.Event) string {
 	return BuildCommonIMContent(event)
 }
 
-func GenerateLPDingContent(event *model.Event) string {
-	return BuildCommonLPDingContent(event)
+func GenerateDingContent(event *model.Event) string {
+	return BuildCommonDingContent(event)
 }

@@ -78,18 +78,18 @@ func WriteMailModel(mail *model.Mail) {
 	lpush(MAIL_QUEUE_NAME, string(bs))
 }
 
-func WriteLPDingModel(lpding *model.LPDing) {
-	if lpding == nil {
+func WriteDingModel(ding *model.Ding) {
+	if ding == nil {
 		return
 	}
 
-	bs, err := json.Marshal(lpding)
+	bs, err := json.Marshal(ding)
 	if err != nil {
 		log.Error(err)
 		return
 	}
 
-	log.Debugf("write lpding to queue, lpding:%v, queue:%s", lpding, LPDING_QUEUE_NAME)
+	log.Debugf("write ding to queue, ding:%v, queue:%s", ding, LPDING_QUEUE_NAME)
 	lpush(LPDING_QUEUE_NAME, string(bs))
 }
 
@@ -120,11 +120,11 @@ func WriteMail(tos []string, subject, content string) {
 	WriteMailModel(mail)
 }
 
-func WriteLPDing(tos []string, subject, content string) {
+func WriteDing(tos []string, subject, content string) {
 	if len(tos) == 0 {
 		return
 	}
 
-	lpding := &model.LPDing{Tos: strings.Join(tos, ","), Subject: subject, Content: content}
-	WriteLPDingModel(lpding)
+	ding := &model.Ding{Tos: strings.Join(tos, ","), Subject: subject, Content: content}
+	WriteDingModel(ding)
 }

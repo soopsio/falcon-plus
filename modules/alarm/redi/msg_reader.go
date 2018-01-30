@@ -27,7 +27,7 @@ const (
 	IM_QUEUE_NAME     = "/im"
 	SMS_QUEUE_NAME    = "/sms"
 	MAIL_QUEUE_NAME   = "/mail"
-	LPDING_QUEUE_NAME = "/lpding"
+	LPDING_QUEUE_NAME = "/ding"
 )
 
 func PopAllSms() []*model.Sms {
@@ -129,8 +129,8 @@ func PopAllMail() []*model.Mail {
 	return ret
 }
 
-func PopAllLPDing() []*model.LPDing {
-	ret := []*model.LPDing{}
+func PopAllDing() []*model.Ding {
+	ret := []*model.Ding{}
 	queue := LPDING_QUEUE_NAME
 
 	rc := g.RedisConnPool.Get()
@@ -149,14 +149,14 @@ func PopAllLPDing() []*model.LPDing {
 			continue
 		}
 
-		var lpding model.LPDing
-		err = json.Unmarshal([]byte(reply), &lpding)
+		var ding model.Ding
+		err = json.Unmarshal([]byte(reply), &ding)
 		if err != nil {
 			log.Error(err, reply)
 			continue
 		}
 
-		ret = append(ret, &lpding)
+		ret = append(ret, &ding)
 	}
 
 	return ret

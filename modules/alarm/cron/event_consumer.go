@@ -58,13 +58,13 @@ func consumeHighEvents(event *cmodel.Event, action *api.Action) {
 	smsContent := GenerateSmsContent(event)
 	mailContent := GenerateMailContent(event)
 	imContent := GenerateIMContent(event)
-	lpdingContent := GenerateLPDingContent(event)
+	dingContent := GenerateDingContent(event)
 	// <=P2 才发送短信
 	if event.Priority() < 3 {
 		redi.WriteSms(phones, smsContent)
 	}
 
-	redi.WriteLPDing(phones, smsContent, lpdingContent)
+	redi.WriteDing(phones, smsContent, dingContent)
 	redi.WriteIM(ims, imContent)
 	redi.WriteMail(mails, smsContent, mailContent)
 
@@ -80,7 +80,7 @@ func consumeLowEvents(event *cmodel.Event, action *api.Action) {
 	if event.Priority() < 3 {
 		ParseUserSms(event, action)
 	}
-	ParseUserLPDing(event, action)
+	ParseUserDing(event, action)
 	ParseUserIm(event, action)
 	ParseUserMail(event, action)
 }
@@ -154,22 +154,22 @@ func ParseUserMail(event *cmodel.Event, action *api.Action) {
 		}
 	}
 }
-func ParseUserLPDing(event *cmodel.Event, action *api.Action) {
+func ParseUserDing(event *cmodel.Event, action *api.Action) {
 	userMap := api.GetUsers(action.Uic)
 
 	metric := event.Metric()
 	subject := GenerateSmsContent(event)
-	content := GenerateLPDingContent(event)
+	content := GenerateDingContent(event)
 	status := event.Status
 	priority := event.Priority()
 
-	queue := g.Config().Redis.UserLPDingQueue
+	queue := g.Config().Redis.UserDingQueue
 
 	rc := g.RedisConnPool.Get()
 	defer rc.Close()
 
 	for _, user := range userMap {
-		dto := LPDingDto{
+		dto := DingDto{
 			Priority: priority,
 			Metric:   metric,
 			Subject:  subject,
@@ -179,7 +179,7 @@ func ParseUserLPDing(event *cmodel.Event, action *api.Action) {
 		}
 		bs, err := json.Marshal(dto)
 		if err != nil {
-			log.Error("json marshal LPDingDto fail:", err)
+			log.Error("json marshal DingDto fail:", err)
 			continue
 		}
 
