@@ -37,7 +37,7 @@ func ReceiveItem(item *cmodel.GraphItem, md5 string) {
 	}
 
 	uuid := item.UUID()
-
+	log.Debugf("GraphItem is: %+v, md5: %v", item, md5)
 	// 已上报过的数据
 	if IndexedItemCache.ContainsKey(md5) {
 		old := IndexedItemCache.Get(md5).(*IndexCacheItem)
@@ -51,6 +51,7 @@ func ReceiveItem(item *cmodel.GraphItem, md5 string) {
 
 	// 针对 mysql索引重建场景 做的优化，是否有rrdtool文件存在,如果有 则认为MySQL中已建立索引；
 	rrdFileName := g.RrdFileName(g.Config().RRD.Storage, md5, item.DsType, item.Step)
+	log.Debugf("RrdFileName: %v", rrdFileName)
 	if g.IsRrdFileExist(rrdFileName) {
 		IndexedItemCache.Put(md5, NewIndexCacheItem(uuid, item))
 		return
